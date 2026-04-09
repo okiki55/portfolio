@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Projects - {{ profile.name or 'ML/AI Engineer' }}{% endblock %}
+
+{% block content %}
+<section class="projects-page section">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="section-title">
+            <h1 class="fade-in">My Projects</h1>
+            <p class="section-subtitle fade-in">
+                Explore my machine learning and AI projects. Each project is interactive - 
+                you can input your own data and see predictions in real-time.
+            </p>
+        </div>
+        
+        {% if projects|length > 0 %}
+        <!-- Filter Buttons -->
+        <div class="projects-filter fade-in">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-th me-1"></i> All ({{ projects|length }})
+            </button>
+            {% set ml_count = projects | selectattr('type', 'equalto', 'ml') | list | length %}
+            {% set dl_count = projects | selectattr('type', 'equalto', 'dl') | list | length %}
+            {% if ml_count > 0 %}
+            <button class="filter-btn" data-filter="ml">
+                <i class="fas fa-chart-line me-1"></i> Machine Learning ({{ ml_count }})
+            </button>
+            {% endif %}
+            {% if dl_count > 0 %}
+            <button class="filter-btn" data-filter="dl">
+                <i class="fas fa-brain me-1"></i> Deep Learning ({{ dl_count }})
+            </button>
+            {% endif %}
+        </div>
+        
+        <!-- Projects Grid -->
+        <div class="projects-grid" id="projects-grid">
+            {% for project in projects %}
+            <div class="project-card fade-in" data-type="{{ project.type }}">
+                <div class="project-thumbnail">
+                    <img src="{{ project.thumbnail_url }}" 
+                         alt="{{ project.name }}"
+                         onerror="this.src='https://placehold.co/400x200/12121a/00d4ff?text={{ project.name|urlencode }}'">
+                    <span class="project-type-badge">{{ project.type|upper }}</span>
+                </div>
+                <div class="project-content">
+                    <h4 class="project-title">{{ project.name }}</h4>
+                    <p class="project-description">{{ project.description }}</p>
+                    <div class="project-tags">
+                        {% for tag in project.tags %}
+                        <span class="project-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Project Stats -->
+                    <div class="project-stats" style="display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                        <span title="Number of inputs">
+                            <i class="fas fa-sliders-h me-1"></i>
+                            {{ project.inputs|length }} inputs
+                        </span>
+                        <span title="Output type">
+                            <i class="fas fa-bullseye me-1"></i>
+                            {{ project.output.type if project.output else 'prediction' }}
+                        </span>
+                    </div>
+                    
+                    <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-primary-custom w-100">
+                        <i class="fas fa-play me-2"></i>Try It Live
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% else %}
+        <!-- No Projects -->
+        <div class="no-projects fade-in">
+            <i class="fas fa-folder-open"></i>
+            <h3>No Projects Yet</h3>
+            <p>Projects will appear here once you add them to the projects folder.</p>
+            <div style="margin-top: 2rem; text-align: left; max-width: 500px; margin-left: auto; margin-right: auto;">
+                <p class="font-mono" style="font-size: 0.9rem; color: var(--accent-primary); margin-bottom: 1rem;">
+                    How to add a project:
+                </p>
+                <ol style="color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">
+                    <li>Create a folder in <code>/projects</code></li>
+                    <li>Add a <code>config.json</code> with project metadata</li>
+                    <li>Add a <code>predict.py</code> with your ML logic</li>
+                    <li>Add your model file (<code>model.pkl</code> or <code>model.h5</code>)</li>
+                </ol>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if projects|length > 0 %}
+<script>
+// Project filtering
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Filter projects
+        const filter = this.dataset.filter;
+        const cards = document.querySelectorAll('.project-card');
+        
+        cards.forEach(card => {
+            if (filter === 'all' || card.dataset.type === filter) {
+                card.style.display = 'block';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 50);
+            } else {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300);
+            }
+        });
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

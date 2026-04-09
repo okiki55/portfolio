@@ -1,0 +1,41 @@
+{
+  "name": "Crop Pest Detection System",
+  "type": "Dl",
+  "description": "An AI-powered system that detects and classifies crop pests from images, helping farmers identify infestations early and take timely action.",
+  
+  "problem": "Farmers often struggle to identify pest infestations early, leading to crop damage, reduced yield, and overuse of pesticides due to misdiagnosis.",
+  
+  "solution": "Developed a computer vision model that analyzes crop images to detect and classify pest types, enabling faster and more accurate decision-making.",
+  
+  "features": [
+    "Image-based pest detection using trained deep learning model",
+    "Supports multiple pest categories and crop types",
+    "Simple interface for uploading crop images",
+    "Fast prediction with probability confidence scores"
+  ],
+  
+  "tags": [
+    "Python",
+    "Flask",
+    "TensorFlow",
+    "Keras",
+    "Computer Vision",
+    "Deep Learning",
+    "Agriculture"
+  ],
+  
+  "info": "Trained a convolutional neural network (CNN) on labeled crop image data to classify different pest types. Focused on improving model accuracy and generalization across varying image conditions.",
+  
+  "future_improvements": [
+    "Deploy model for mobile usage in low-resource environments",
+    "Expand dataset to include more pest categories",
+    "Integrate real-time camera detection",
+    "Provide treatment recommendations based on detected pest"
+  ]
+  ,"inputs":[{
+  "name": "image",
+  "label": "Upload Image",
+  "type": "image",
+  "accepted_formats": ["jpg", "jpeg", "png", "webp"],
+  "required": true}]
+}

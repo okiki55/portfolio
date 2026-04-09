@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <div class="container text-center">
+        <div class="error-code">500</div>
+        <h1 class="mt-4">Server Error</h1>
+        <p class="lead" style="color: var(--text-secondary); max-width: 500px; margin: 1rem auto 2rem;">
+            Something went wrong on our end. Please try again later.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ url_for('index') }}" class="btn btn-primary-custom">
+                <i class="fas fa-home me-2"></i>Go Home
+            </a>
+            <a href="javascript:location.reload()" class="btn btn-outline-custom">
+                <i class="fas fa-redo me-2"></i>Retry
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

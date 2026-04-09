@@ -1,0 +1,202 @@
+{
+  "name": "Smart Agriculture AI System",
+  "type": "DL",
+  "description": "An integrated machine learning system that combines irrigation prediction and pest classification to support smarter farming decisions using both environmental data and plant images.",
+
+  "problem": "Farmers often struggle with two major challenges: determining the right irrigation schedule and identifying crop diseases early. Relying on manual judgment can lead to water wastage, reduced yield, and delayed pest detection.",
+
+  "solution": "Developed a dual-model system where one model predicts irrigation needs based on environmental and soil data, while another model classifies plant diseases from leaf images. Both models are integrated into a single application for ease of use.",
+
+  "features": [
+    "Irrigation prediction using structured environmental and soil data",
+    "Pest/disease classification using image-based deep learning",
+    "Combined prediction endpoint handling both data types",
+    "End-to-end preprocessing pipelines for tabular and image data",
+    "Interactive web interface for user input and results display",
+    "Flask-based API for scalable deployment"
+  ],
+
+  "tags": [
+    "Python",
+    "Flask",
+    "Scikit-learn",
+    "TensorFlow",
+    "Keras",
+    "Pandas",
+    "NumPy",
+    "Computer Vision",
+    "Agriculture",
+    "AI"
+  ],
+
+  "info": "Built and integrated two machine learning models: a supervised learning model for irrigation prediction and a convolutional neural network for plant disease classification. Focused on combining multiple data modalities into a single intelligent system.",
+
+  "future_improvements": [
+    "Integrate real-time weather data APIs for more accurate irrigation predictions",
+    "Expand pest classification model with more crop disease categories",
+    "Deploy as a full-stack mobile-friendly application",
+    "Add IoT sensor integration for real-time farm monitoring",
+    "Implement model explainability for better user trust"
+  ],
+  "inputs": [
+
+    {
+      "name": "Soil_Type",
+      "label": "Soil Type",
+      "type": "select",
+      "options": ["Sandy", "Clay", "Loamy", "Silt"],
+      "required": true
+    },
+
+    {
+      "name": "Crop_Type",
+      "label": "Crop Type",
+      "type": "select",
+      "options": ["Wheat", "Rice", "Maize", "Potato", "Sugarcane"],
+      "required": true
+    },
+
+    {
+      "name": "Crop_Growth_Stage",
+      "label": "Growth Stage",
+      "type": "select",
+      "options": ["Sowing", "Vegetative", "Harvest"],
+      "required": true
+    },
+
+    {
+      "name": "Season",
+      "label": "Season",
+      "type": "select",
+      "options": ["Kharif", "Rabi", "Zaid"],
+      "required": true
+    },
+
+    {
+      "name": "Irrigation_Type",
+      "label": "Irrigation Type",
+      "type": "select",
+      "options": ["Drip", "Sprinkler", "Canal", "Rainfed"],
+      "required": true
+    },
+
+    {
+      "name": "Water_Source",
+      "label": "Water Source",
+      "type": "select",
+      "options": ["Groundwater", "Rainwater", "Reservoir"],
+      "required": true
+    },
+
+    {
+      "name": "Mulching_Used",
+      "label": "Mulching Used",
+      "type": "radio",
+      "options": [
+        {"value": "Yes", "label": "Yes"},
+        {"value": "No", "label": "No"}
+      ],
+      "required": true
+    },
+
+    {
+      "name": "Region",
+      "label": "Region",
+      "type": "select",
+      "options": ["North", "South", "East", "West", "Central"],
+      "required": true
+    },
+
+    {
+      "name": "Soil_pH",
+      "label": "Soil pH",
+      "type": "number",
+      "min": 3,
+      "max": 10,
+      "step": 0.1,
+      "required": true
+    },
+
+    {
+      "name": "Soil_Moisture",
+      "label": "Soil Moisture (%)",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "required": true
+    },
+
+    {
+      "name": "Organic_Carbon",
+      "label": "Organic Carbon",
+      "type": "number",
+      "step": 0.1,
+      "required": true
+    },
+
+    {
+      "name": "Electrical_Conductivity",
+      "label": "Electrical Conductivity",
+      "type": "number",
+      "step": 0.1,
+      "required": true
+    },
+
+    {
+      "name": "Temperature_C",
+      "label": "Temperature (°C)",
+      "type": "number",
+      "required": true
+    },
+
+    {
+      "name": "Humidity",
+      "label": "Humidity (%)",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "required": true
+    },
+
+    {
+      "name": "Rainfall_mm",
+      "label": "Rainfall (mm)",
+      "type": "number",
+      "required": true
+    },
+
+    {
+      "name": "Sunlight_Hours",
+      "label": "Sunlight Hours",
+      "type": "number",
+      "required": true
+    },
+
+    {
+      "name": "Wind_Speed_kmh",
+      "label": "Wind Speed (km/h)",
+      "type": "number",
+      "required": true
+    },
+
+    {
+      "name": "Field_Area_hectare",
+      "label": "Field Area (hectares)",
+      "type": "number",
+      "required": true
+    },
+
+    {
+      "name": "Previous_Irrigation_mm",
+      "label": "Previous Irrigation (mm)",
+      "type": "number",
+      "required": true
+    }
+    ,{
+  "name": "image",
+  "label": "Upload Image",
+  "type": "image",
+  "accepted_formats": ["jpg", "jpeg", "png", "webp"],
+  "required": true}
+  ]
+}

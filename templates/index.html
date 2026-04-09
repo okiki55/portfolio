@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile.name or 'ML/AI Engineer' }} - Portfolio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content text-center">
+            <!-- Profile Image -->
+            <div class="profile-image-wrapper fade-in">
+                <div class="profile-ring"></div>
+                <img src="{{ url_for('static', filename='images/profile.jpg') }}" 
+                     alt="{{ profile.name or 'Profile' }}" 
+                     class="profile-image"
+                     onerror="this.src='https://ui-avatars.com/api/?name={{ profile.name|urlencode or 'AI' }}&size=220&background=00d4ff&color=0a0a0f&bold=true'">
+            </div>
+            
+            <!-- Hero Text -->
+            <h1 class="hero-title fade-in">
+                Hi, I'm <span class="text-gradient">{{ profile.name or 'Your Name' }}</span>
+            </h1>
+            <p class="hero-subtitle fade-in">{{ profile.title or 'ML/AI Engineer' }}</p>
+            <p class="hero-tagline fade-in">{{ profile.tagline or 'Building intelligent systems that transform data into insights.' }}</p>
+            
+            <!-- CTA Buttons -->
+            <div class="hero-buttons fade-in">
+                <a href="#projects-preview" class="btn btn-primary-custom">
+                    <i class="fas fa-rocket me-2"></i>View My Projects
+                </a>
+                <a href="{{ url_for('index') }}#contact" class="btn btn-outline-custom">
+                    <i class="fas fa-envelope me-2"></i>Get In Touch
+                </a>
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator mt-5 fade-in">
+                <a href="#about" class="text-muted">
+                    <i class="fas fa-chevron-down fa-2x" style="animation: bounce 2s infinite;"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2 class="fade-in">About Me</h2>
+            <p class="section-subtitle fade-in">Get to know the person behind the code</p>
+        </div>
+        
+        <div class="about-content">
+            <!-- About Text -->
+            <div class="about-text slide-in-left">
+                {% if profile.bio is iterable and profile.bio is not string %}
+                    {% for paragraph in profile.bio %}
+                    <p>{{ paragraph }}</p>
+                    {% endfor %}
+                {% else %}
+                    <p>{{ profile.bio or 'I am a passionate Machine Learning and Artificial Intelligence Engineer dedicated to building intelligent systems that solve real-world problems.' }}</p>
+                {% endif %}
+                
+                <!-- Achievements -->
+                {% if profile.achievements %}
+                <div class="about-highlights">
+                    {% for achievement in profile.achievements %}
+                    <div class="highlight-item">
+                        <div class="highlight-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <span>{{ achievement }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Stats or Quick Info -->
+            <div class="slide-in-right">
+                <div class="info-card" style="background: var(--bg-card); padding: 2rem; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-terminal text-accent"></i>
+                        Quick Info
+                    </h4>
+                    <div class="info-list">
+                        <div class="info-item" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                            <span style="color: var(--text-muted);">Name:</span>
+                            <span style="font-weight: 500;">{{ profile.name or 'Your Name' }}</span>
+                        </div>
+                        <div class="info-item" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                            <span style="color: var(--text-muted);">Role:</span>
+                            <span style="font-weight: 500;">{{ profile.title or 'ML/AI Engineer' }}</span>
+                        </div>
+                        <div class="info-item" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                            <span style="color: var(--text-muted);">Location:</span>
+                            <span style="font-weight: 500;">{{ profile.location or 'Remote' }}</span>
+                        </div>
+                        <div class="info-item" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                            <span style="color: var(--text-muted);">Email:</span>
+                            <span style="font-weight: 500;"><a href="mailto:{{ profile.email }}">{{ profile.email or 'email@example.com' }}</a></span>
+                        </div>
+                        <div class="info-item" style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                            <span style="color: var(--text-muted);">Projects:</span>
+                            <span style="font-weight: 500; color: var(--accent-primary);">{{ projects|length }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if profile.resume_url %}
+                    <a href="{{ profile.resume_url }}" target="_blank" class="btn btn-outline-custom w-100 mt-4">
+                        <i class="fas fa-download me-2"></i>Download Resume
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills" class="section skills-section">
+    <div class="container">
+        <div class="section-title">
+            <h2 class="fade-in">Skills & Expertise</h2>
+            <p class="section-subtitle fade-in">Technologies and tools I work with</p>
+        </div>
+        
+        <div class="skills-grid">
+            <!-- Programming Languages -->
+            {% if profile.skills and profile.skills.languages %}
+            <div class="skill-category fade-in">
+                <h5 class="skill-category-title">
+                    <i class="fas fa-code"></i>
+                    Programming Languages
+                </h5>
+                <div class="skills-list">
+                    {% for skill in profile.skills.languages %}
+                    <span class="skill-badge">
+                        <i class="fab fa-{{ skill.icon if skill.icon else 'code' }}"></i>
+                        {{ skill.name if skill.name else skill }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- ML/AI Frameworks -->
+            {% if profile.skills and profile.skills.ml_ai %}
+            <div class="skill-category fade-in">
+                <h5 class="skill-category-title">
+                    <i class="fas fa-brain"></i>
+                    ML/AI Frameworks
+                </h5>
+                <div class="skills-list">
+                    {% for skill in profile.skills.ml_ai %}
+                    <span class="skill-badge">
+                        <i class="fas fa-{{ skill.icon if skill.icon else 'microchip' }}"></i>
+                        {{ skill.name if skill.name else skill }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Tools & Platforms -->
+            {% if profile.skills and profile.skills.tools %}
+            <div class="skill-category fade-in">
+                <h5 class="skill-category-title">
+                    <i class="fas fa-tools"></i>
+                    Tools & Platforms
+                </h5>
+                <div class="skills-list">
+                    {% for skill in profile.skills.tools %}
+                    <span class="skill-badge">
+                        <i class="fas fa-{{ skill.icon if skill.icon else 'wrench' }}"></i>
+                        {{ skill.name if skill.name else skill }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Cloud Platforms -->
+            {% if profile.skills and profile.skills.cloud %}
+            <div class="skill-category fade-in">
+                <h5 class="skill-category-title">
+                    <i class="fas fa-cloud"></i>
+                    Cloud Platforms
+                </h5>
+                <div class="skills-list">
+                    {% for skill in profile.skills.cloud %}
+                    <span class="skill-badge">
+                        <i class="fas fa-{{ skill.icon if skill.icon else 'cloud' }}"></i>
+                        {{ skill.name if skill.name else skill }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Projects Preview Section -->
+<section id="projects-preview" class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2 class="fade-in">Featured Projects</h2>
+            <p class="section-subtitle fade-in">Explore my machine learning and AI projects</p>
+        </div>
+        
+        {% if projects|length > 0 %}
+            {% if projects|length > 2 %}
+            <!-- Scrollable Projects (when more than 2) -->
+            <div class="projects-preview fade-in">
+                <div class="projects-scroll-container" id="projects-carousel">
+                    <div class="projects-scroll-grid">
+                        {% for project in projects %}
+                        <div class="project-card">
+                            <div class="project-thumbnail">
+                                <img src="{{ project.thumbnail_url }}" 
+                                     alt="{{ project.name }}"
+                                     onerror="this.src='https://placehold.co/400x200/12121a/00d4ff?text={{ project.name|urlencode }}'">
+                                <span class="project-type-badge">{{ project.type|upper }}</span>
+                            </div>
+                            <div class="project-content">
+                                <h4 class="project-title">{{ project.name }}</h4>
+                                <p class="project-description">{{ project.description }}</p>
+                                <div class="project-tags">
+                                    {% for tag in project.tags[:3] %}
+                                    <span class="project-tag">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                                <a href="{{ url_for('project_detail', project_id=project.id) }}" class="project-link">
+                                    Try It Live <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Scroll Indicators -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-custom btn-sm me-2" onclick="scrollProjects(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-outline-custom btn-sm" onclick="scrollProjects(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            <!-- Grid Layout (2 or fewer projects) -->
+            <div class="projects-grid fade-in">
+                {% for project in projects %}
+                <div class="project-card">
+                    <div class="project-thumbnail">
+                        <img src="{{ project.thumbnail_url }}" 
+                             alt="{{ project.name }}"
+                             onerror="this.src='https://placehold.co/400x200/12121a/00d4ff?text={{ project.name|urlencode }}'">
+                        <span class="project-type-badge">{{ project.type|upper }}</span>
+                    </div>
+                    <div class="project-content">
+                        <h4 class="project-title">{{ project.name }}</h4>
+                        <p class="project-description">{{ project.description }}</p>
+                        <div class="project-tags">
+                            {% for tag in project.tags[:3] %}
+                            <span class="project-tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="project-link">
+                            Try It Live <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- View All Button -->
+            <div class="text-center mt-5 fade-in">
+                <a href="{{ url_for('projects_list') }}" class="btn btn-primary-custom">
+                    <i class="fas fa-th me-2"></i>View All Projects ({{ projects|length }})
+                </a>
+            </div>
+        {% else %}
+            <!-- No Projects Yet -->
+            <div class="no-projects fade-in">
+                <i class="fas fa-folder-open"></i>
+                <h3>No Projects Yet</h3>
+                <p>Projects will appear here once you add them to the projects folder.</p>
+                <p class="font-mono" style="font-size: 0.9rem; color: var(--accent-primary);">
+                    Add a folder with config.json to /projects to get started.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+/* Bounce animation for scroll indicator */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.scroll-indicator a {
+    display: inline-block;
+    transition: var(--transition-base);
+}
+
+.scroll-indicator a:hover {
+    color: var(--accent-primary) !important;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Scroll projects carousel
+function scrollProjects(direction) {
+    const container = document.getElementById('projects-carousel');
+    const scrollAmount = 370; // card width + gap
+    container.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+}
+
+// Auto-scroll for carousel (optional - uncomment to enable)
+/*
+let autoScrollInterval;
+function startAutoScroll() {
+    autoScrollInterval = setInterval(() => {
+        const container = document.getElementById('projects-carousel');
+        if (container) {
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            if (container.scrollLeft >= maxScroll) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                scrollProjects(1);
+            }
+        }
+    }, 4000);
+}
+
+function stopAutoScroll() {
+    clearInterval(autoScrollInterval);
+}
+
+const carousel = document.getElementById('projects-carousel');
+if (carousel) {
+    startAutoScroll();
+    carousel.addEventListener('mouseenter', stopAutoScroll);
+    carousel.addEventListener('mouseleave', startAutoScroll);
+}
+*/
+</script>
+{% endblock %}

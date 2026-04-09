@@ -1,0 +1,12 @@
+{
+  "name": "ml-ai-portfolio",
+  "version": "1.0.0",
+  "description": "Dynamic Flask-based portfolio for ML/AI Engineers",
+  "scripts": {
+    "dev": "uv run python app.py",
+    "start": "uv run gunicorn -w 4 -b 0.0.0.0:5000 app:app",
+    "install-python": "uv sync"
+  },
+  "keywords": ["flask", "machine-learning", "ai", "portfolio", "python"],
+  "license": "MIT"
+}

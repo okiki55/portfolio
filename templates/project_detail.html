@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} - {{ profile.name or 'ML/AI Engineer' }}{% endblock %}
+
+{% block content %}
+<section class="project-detail-page section">
+    <div class="container">
+        <!-- Back Button -->
+        <div class="mb-4 fade-in">
+            <a href="{{ url_for('projects_list') }}" class="btn btn-outline-custom btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Back to Projects
+            </a>
+        </div>
+        
+        <!-- Project Header -->
+        <div class="project-header fade-in">
+            <div class="project-detail-thumbnail">
+                <img src="{{ project.thumbnail_url }}" 
+                     alt="{{ project.name }}"
+                     onerror="this.src='https://placehold.co/800x400/12121a/00d4ff?text={{ project.name|urlencode }}'">
+            </div>
+            
+            <h1 class="mt-4">{{ project.name }}</h1>
+            <p class="lead" style="color: var(--text-secondary); max-width: 700px; margin: 0 auto;">
+                {{ project.description }}
+            </p>
+            
+            <div class="project-meta">
+                <span class="meta-item">
+                    <i class="fas fa-tag"></i>
+                    {{ project.type|upper }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-sliders-h"></i>
+                    {{ project.inputs|length }} inputs
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-bullseye"></i>
+                    {{ project.output.type if project.output else 'Prediction' }}
+                </span>
+            </div>
+            
+            <!-- Project Tags -->
+            <div class="project-tags mt-3" style="justify-content: center; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                {% for tag in project.tags %}
+                <span class="project-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <!-- Prediction Form -->
+                <div class="prediction-form-card fade-in">
+                    <h3 class="form-title">
+                        <i class="fas fa-flask"></i>
+                        Make a Prediction
+                    </h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Fill in the values below and click "Predict" to see the result.
+                    </p>
+                    
+                    <form id="prediction-form" data-project-id="{{ project.id }}" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            {% for input in project.inputs %}
+                            <div class="form-group">
+                                <label class="form-label" for="{{ input.name }}">
+                                    {{ input.label or input.name }}
+                                    {% if input.required %}<span class="text-accent">*</span>{% endif %}
+                                </label>
+                                
+                                {% if input.type == 'number' %}
+                                <!-- Number Input -->
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="{{ input.name }}" 
+                                       name="{{ input.name }}"
+                                       placeholder="{{ input.placeholder or 'Enter a number' }}"
+                                       {% if input.min is defined %}min="{{ input.min }}"{% endif %}
+                                       {% if input.max is defined %}max="{{ input.max }}"{% endif %}
+                                       {% if input.step is defined %}step="{{ input.step }}"{% else %}step="any"{% endif %}
+                                       {% if input.default is defined %}value="{{ input.default }}"{% endif %}
+                                       {% if input.required %}required{% endif %}>
+                                {% if input.hint %}
+                                <small class="form-text text-muted">{{ input.hint }}</small>
+                                {% endif %}
+                                
+                                {% elif input.type == 'text' %}
+                                <!-- Text Input -->
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="{{ input.name }}" 
+                                       name="{{ input.name }}"
+                                       placeholder="{{ input.placeholder or 'Enter text' }}"
+                                       {% if input.maxlength %}maxlength="{{ input.maxlength }}"{% endif %}
+                                       {% if input.default is defined %}value="{{ input.default }}"{% endif %}
+                                       {% if input.required %}required{% endif %}>
+                                
+                                {% elif input.type == 'textarea' %}
+                                <!-- Textarea -->
+                                <textarea class="form-control" 
+                                          id="{{ input.name }}" 
+                                          name="{{ input.name }}"
+                                          rows="{{ input.rows or 4 }}"
+                                          placeholder="{{ input.placeholder or 'Enter text...' }}"
+                                          {% if input.required %}required{% endif %}>{{ input.default or '' }}</textarea>
+                                
+                                {% elif input.type == 'select' %}
+                                <!-- Select Dropdown -->
+                                <select class="form-control form-select" 
+                                        id="{{ input.name }}" 
+                                        name="{{ input.name }}"
+                                        {% if input.required %}required{% endif %}>
+                                    <option value="" disabled {% if not input.default %}selected{% endif %}>
+                                        {{ input.placeholder or 'Select an option' }}
+                                    </option>
+                                    {% for option in input.options %}
+                                    <option value="{{ option.value if option.value is defined else option }}"
+                                            {% if input.default == (option.value if option.value is defined else option) %}selected{% endif %}>
+                                        {{ option.label if option.label is defined else option }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                
+                                {% elif input.type == 'radio' %}
+                                <!-- Radio Buttons -->
+                                <div class="radio-group">
+                                    {% for option in input.options %}
+                                    <div class="form-check">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               id="{{ input.name }}_{{ loop.index }}" 
+                                               name="{{ input.name }}"
+                                               value="{{ option.value if option.value is defined else option }}"
+                                               {% if input.default == (option.value if option.value is defined else option) %}checked{% endif %}
+                                               {% if input.required and loop.first %}required{% endif %}>
+                                        <label class="form-check-label" for="{{ input.name }}_{{ loop.index }}">
+                                            {{ option.label if option.label is defined else option }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                {% elif input.type == 'checkbox' %}
+                                <!-- Checkbox -->
+                                <div class="form-check">
+                                    <input type="checkbox" 
+                                           class="form-check-input" 
+                                           id="{{ input.name }}" 
+                                           name="{{ input.name }}"
+                                           {% if input.default %}checked{% endif %}>
+                                    <label class="form-check-label" for="{{ input.name }}">
+                                        {{ input.checkbox_label or 'Yes' }}
+                                    </label>
+                                </div>
+                                
+                                {% elif input.type == 'range' %}
+                                <!-- Range Slider -->
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <input type="range" 
+                                           class="form-range flex-grow-1" 
+                                           id="{{ input.name }}" 
+                                           name="{{ input.name }}"
+                                           min="{{ input.min or 0 }}"
+                                           max="{{ input.max or 100 }}"
+                                           step="{{ input.step or 1 }}"
+                                           value="{{ input.default or input.min or 0 }}">
+                                    <span class="range-value" id="{{ input.name }}-value">
+                                        {{ input.default or input.min or 0 }}
+                                    </span>
+                                </div>
+                                {% if input.hint %}
+                                <small class="form-text text-muted">{{ input.hint }}</small>
+                                {% endif %}
+                                
+                                {% elif input.type == 'image' %}
+                                <!-- Image Upload -->
+                                <div class="image-upload-area">
+                                    <input type="file" 
+                                           id="{{ input.name }}" 
+                                           name="{{ input.name }}"
+                                           accept="{{ input.accepted_formats|join(',') if input.accepted_formats else 'image/*' }}"
+                                           style="display: none;"
+                                           {% if input.required %}required{% endif %}>
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click or drag an image here to upload</p>
+                                    <small style="color: var(--text-muted);">
+                                        Accepted formats: {{ input.accepted_formats|join(', ') if input.accepted_formats else 'JPG, PNG, GIF' }}
+                                    </small>
+                                    <img class="image-preview" style="display: none;" alt="Preview">
+                                </div>
+                                
+                                {% elif input.type == 'date' %}
+                                <!-- Date Input -->
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="{{ input.name }}" 
+                                       name="{{ input.name }}"
+                                       {% if input.default is defined %}value="{{ input.default }}"{% endif %}
+                                       {% if input.required %}required{% endif %}>
+                                
+                                {% elif input.type == 'email' %}
+                                <!-- Email Input -->
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="{{ input.name }}" 
+                                       name="{{ input.name }}"
+                                       placeholder="{{ input.placeholder or 'email@example.com' }}"
+                                       {% if input.default is defined %}value="{{ input.default }}"{% endif %}
+                                       {% if input.required %}required{% endif %}>
+                                
+                                {% else %}
+                                <!-- Default: Text Input -->
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="{{ input.name }}" 
+                                       name="{{ input.name }}"
+                                       placeholder="{{ input.placeholder or '' }}"
+                                       {% if input.default is defined %}value="{{ input.default }}"{% endif %}
+                                       {% if input.required %}required{% endif %}>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="predict-btn">
+                                <span class="btn-text">
+                                    <i class="fas fa-magic me-2"></i>Predict
+                                </span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Error Display -->
+                <div id="error-display" class="error-message" style="display: none;"></div>
+                
+                <!-- Results Section -->
+                <div id="results-section" class="results-section">
+                    <div class="result-card">
+                        <h4 class="result-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Prediction Result
+                        </h4>
+                        
+                        <!-- Main Result Value -->
+                        <div id="result-value" class="result-value">-</div>
+                        
+                        <!-- Output Label -->
+                        {% if project.output and project.output.label %}
+                        <p class="text-center" style="color: var(--text-secondary);">
+                            {{ project.output.label }}
+                        </p>
+                        {% endif %}
+                        
+                        <!-- Confidence Display -->
+                        <div id="confidence-display" class="result-detail-item" style="display: none; max-width: 200px; margin: 1rem auto;"></div>
+                        
+                        <!-- Additional Details -->
+                        <div id="result-details" class="result-details"></div>
+                        
+                        <!-- Chart Container -->
+                        {% if project.output and project.output.show_chart %}
+                        <div id="chart-container" class="chart-container" style="display: none;">
+                            <div class="chart-wrapper">
+                                <canvas id="result-chart"></canvas>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Project Info Sidebar (optional) -->
+        {% if project.info or project.github_url or project.notebook_url %}
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="prediction-form-card fade-in">
+                    <h4 class="form-title">
+                        <i class="fas fa-info-circle"></i>
+                        About This Model
+                    </h4>
+                    
+                    {% if project.info %}
+                    <div style="color: var(--text-secondary);">
+                        {{ project.info | safe }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" target="_blank" rel="noopener" class="btn btn-outline-custom">
+                            <i class="fab fa-github me-2"></i>View on GitHub
+                        </a>
+                        {% endif %}
+                        {% if project.notebook_url %}
+                        <a href="{{ project.notebook_url }}" target="_blank" rel="noopener" class="btn btn-outline-custom">
+                            <i class="fas fa-book me-2"></i>View Notebook
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Store output config for JavaScript
+window.projectOutput = {{ project.output | tojson | safe if project.output else '{}' }};
+</script>
+{% endblock %}

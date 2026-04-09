@@ -1,0 +1,54 @@
+{
+  "name": "Aboderin Okikiola",
+  "title": "ML/AI Engineer",
+  "tagline": "Building practical AI systems that solve real-world problems with data",
+  "bio": [
+  "I am a Machine Learning enthusiast focused on building real-world AI systems from scratch. I enjoy working across the full pipeline from data cleaning and feature engineering to training models and deploying them into usable applications.",
+  "My recent work includes projects in predictive analytics and intelligent decision systems, such as irrigation optimization and customer churn prediction. I focus on making models not just accurate, but actually useful in real scenarios.",
+  "Currently, I am exploring deeper areas of machine learning and working towards building more advanced AI systems, with a long-term goal of creating end-to-end intelligent applications that combine data, models, and user interaction."
+  ],
+  "email": "aboderinokiki6@gmail.com",
+  "location": "Abeokuta Ogun, Nigeria",
+  "social": {
+    "github": "https://github.com/okiki55",
+    "linkedin": "https://linkedin.com/in/okiki55",
+    "twitter": "https://x.com/Okikiola145960",
+    "kaggle": "https://kaggwle.com/aboderinokikiola"
+  },
+  "skills": {
+    "languages": [
+      {"name": "Python", "icon": "python"},
+      {"name": "SQL", "icon": "database"},
+      {"name": "R", "icon": "chart-line"},
+      {"name": "JavaScript", "icon": "js"}
+    ],
+    "ml_ai": [
+      {"name": "TensorFlow", "icon": "brain"},
+      {"name": "PyTorch", "icon": "fire"},
+      {"name": "Scikit-learn", "icon": "cogs"},
+      {"name": "Keras", "icon": "layer-group"},
+      {"name": "XGBoost", "icon": "tree"},
+      {"name": "OpenCV", "icon": "eye"}
+    ],
+    "tools": [
+      {"name": "Docker", "icon": "docker"},
+      {"name": "Git", "icon": "code-branch"},
+      {"name": "Jupyter", "icon": "book"},
+      {"name": "MLflow", "icon": "chart-bar"},
+      {"name": "FastAPI", "icon": "bolt"},
+      {"name": "Streamlit", "icon": "desktop"}
+    ],
+    "cloud": [
+      {"name": "AWS", "icon": "cloud"},
+      {"name": "GCP", "icon": "cloud"},
+      {"name": "Azure", "icon": "cloud"},
+      {"name": "Heroku", "icon": "server"}
+    ]
+  },
+  "resume_url": "",
+  "achievements": [
+  "Built and deployed multiple machine learning projects (e.g., customer churn prediction, irrigation optimization)",
+  "Developed end-to-end ML pipelines from data preprocessing to model evaluation",
+  "Actively learning and applying machine learning through real-world projects and experimentation"
+  ]
+}

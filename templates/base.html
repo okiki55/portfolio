@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ profile.name or 'ML/AI Engineer' }} - Portfolio{% endblock %}</title>
+    <meta name="description" content="{{ profile.tagline or 'Machine Learning and AI Engineer Portfolio' }}">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <span class="brand-icon">&lt;/&gt;</span>
+                <span class="brand-text">{{ profile.name or 'Portfolio' }}</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}{% endif %}" href="{{ url_for('index') }}#about">
+                            <i class="fas fa-user me-1"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}{% endif %}" href="{{ url_for('index') }}#skills">
+                            <i class="fas fa-code me-1"></i> Skills
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint in ['projects_list', 'project_detail'] %}active{% endif %}" href="{{ url_for('projects_list') }}">
+                            <i class="fas fa-folder-open me-1"></i> Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}#contact">
+                            <i class="fas fa-envelope me-1"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="footer-title">{{ profile.name or 'ML/AI Engineer' }}</h5>
+                    <p class="footer-text">{{ profile.tagline or 'Building intelligent systems' }}</p>
+                    <div class="social-links">
+                        {% if profile.social %}
+                            {% if profile.social.github %}
+                            <a href="{{ profile.social.github }}" target="_blank" rel="noopener" class="social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            {% endif %}
+                            {% if profile.social.linkedin %}
+                            <a href="{{ profile.social.linkedin }}" target="_blank" rel="noopener" class="social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            {% endif %}
+                            {% if profile.social.twitter %}
+                            <a href="{{ profile.social.twitter }}" target="_blank" rel="noopener" class="social-link" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            {% endif %}
+                            {% if profile.social.kaggle %}
+                            <a href="{{ profile.social.kaggle }}" target="_blank" rel="noopener" class="social-link" title="Kaggle">
+                                <i class="fab fa-kaggle"></i>
+                            </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        <li><a href="{{ url_for('index') }}#about">About Me</a></li>
+                        <li><a href="{{ url_for('projects_list') }}">Projects</a></li>
+                        <li><a href="{{ url_for('index') }}#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4" id="contact">
+                    <h5 class="footer-title">Get In Touch</h5>
+                    <p class="footer-text">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:{{ profile.email or 'email@example.com' }}">{{ profile.email or 'email@example.com' }}</a>
+                    </p>
+                    {% if profile.location %}
+                    <p class="footer-text">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        {{ profile.location }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <hr class="footer-divider">
+            
+            <div class="footer-bottom">
+                <p>&copy; {{ now().year if now is defined else '2026' }} {{ profile.name or 'ML/AI Engineer' }}. All rights reserved.</p>
+                <p class="footer-tech">Built with <i class="fab fa-python text-accent"></i> Flask & <i class="fas fa-heart text-accent"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
