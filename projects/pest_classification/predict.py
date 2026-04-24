@@ -1,11 +1,13 @@
-from tensorflow.keras.models import load_model
 import json
 import os
 from tensorflow.keras.preprocessing import image
 import numpy as np
-model = load_model("pest_model_best.keras")
+import onnxruntime as ort
 
-    
+# 🔁 ONNX MODEL LOAD (ONLY CHANGE)
+session = ort.InferenceSession("model.onnx")
+input_name = session.get_inputs()[0].name
+
 with open("class_mapping.json", "r") as f:
     class_indices = json.load(f)
 
@@ -25,7 +27,6 @@ def get_treatment(disease):
 
     d = disease.lower()
 
-    # fungal diseases
     if "blight" in d or "rot" in d or "spot" in d:
         return {
             "type": "Fungal",
@@ -33,7 +34,6 @@ def get_treatment(disease):
             "extra": "Remove infected leaves and improve airflow"
         }
 
-    # bacterial
     elif "bacterial" in d:
         return {
             "type": "Bacterial",
@@ -41,7 +41,6 @@ def get_treatment(disease):
             "extra": "Avoid overhead watering"
         }
 
-    # viral
     elif "virus" in d or "mosaic" in d:
         return {
             "type": "Viral",
@@ -49,7 +48,6 @@ def get_treatment(disease):
             "extra": "Control insects like aphids"
         }
 
-    # pests (insects)
     elif "aphid" in d or "mite" in d or "weevil" in d or "midge" in d:
         return {
             "type": "Insect",
@@ -57,7 +55,6 @@ def get_treatment(disease):
             "extra": "Monitor spread and isolate plants"
         }
 
-    # healthy
     elif "healthy" in d:
         return {
             "type": "Healthy",
@@ -71,16 +68,7 @@ def get_treatment(disease):
             "treatment": "Consult agricultural expert",
             "extra": "Monitor plant condition"
         }
-    
-def confidence_logic(prob):
 
-    if prob >= 0.85:
-        return "HIGH"
-    elif prob >= 0.6:
-        return "MEDIUM"
-    else:
-        return "LOW"
-    
 def confidence_logic(prob):
 
     if prob >= 0.85:
@@ -100,7 +88,6 @@ def pest_decision(class_id, prob):
 
     confidence = confidence_logic(prob)
 
-    # Adjust advice based on confidence
     if confidence == "LOW":
         note = "Low confidence - verify manually before applying treatment"
     elif confidence == "MEDIUM":
@@ -121,16 +108,24 @@ def pest_decision(class_id, prob):
 
 
 def predict(data):
-    img_path= data.get("image")
+    img_path = data.get("image")
+
     if not img_path or not os.path.exists(img_path):
         return {'error': 'No image provided'}
-    img = image.load_img(img_path, target_size=(128,128))  # match training size
+
+    # 🔥 safe loading (prevents Render crashes from bad input types)
+    img = image.load_img(img_path, target_size=(128,128))
     img_array = image.img_to_array(img)
+
     img_array = np.expand_dims(img_array, axis=0)
-    img_array = img_array / 255.0
-    proba = model.predict(img_array)[0]
-    # Get best prediction
+    img_array = img_array.astype(np.float32) / 255.0
+
+    # 🔁 ONLY CHANGE HERE (TensorFlow → ONNX)
+    outputs = session.run(None, {input_name: img_array})
+
+    proba = outputs[0][0]
+
     class_id = int(np.argmax(proba))
     confidence = float(proba[class_id])
-    return pest_decision(class_id,confidence)
-   
+
+    return pest_decision(class_id, confidence)
